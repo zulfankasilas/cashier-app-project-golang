@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dashboard Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      function displayQty(listData, checkId, qtyId) {
+        var checkBox = document.getElementById(checkId);
+        var qty = document.getElementById(qtyId);
+        if (checkBox.checked == true) {
+          qty.style.display = "block";
+          checkBox.value = listData + "," + qty.value;
+        } else {
+          qty.style.display = "none";
+        }
+      }
+    </script>
+    <style>
+      .avatar {
+        float: left;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+      }
+
+      .avatar:hover {
+        background-color: #000;
+        cursor: pointer;
+      }
+
+      .navbar {
+        width: 100%;
+        overflow: auto;
+      }
+
+      .menu {
+        float: left;
+        text-align: center;
+        padding: 12px;
+        color: #000;
+        text-decoration: none;
+        font-size: 17px;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gradient-to-r from-cyan-500 to-blue-500 ...">
+    <div class="bg-white m-10 rounded-t-3xl rounded-b-2xl drop-shadow-lg">
+      <div class="bg-yellow-400 rounded-2xl p-10">
+        <header class="my-2">
+          <h1 class="text-2xl font-bold">Dashboard Page</h1>
+        </header>
+
+        <nav>
+          <form
+            method="post"
+            action="/user/img/update-profile"
+            enctype="multipart/form-data"
+          >
+            <div class="navbar">
+              <img src="/user/img/profile" alt="Avatar" class="avatar" />
+              <label class="text-5xl menu">Hello {{.Cart.Name}}!</label>
+              <div class="content-end">
+                <label class="menu">Update Profile: </label>
+                <input type="file" name="file-avatar" required />
+                <button
+                  type="submit"
+                  class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-1 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </form>
+        </nav>
+      </div>
+    </div>
+    <div class="bg-white m-10 rounded-t-3xl rounded-b-2xl drop-shadow-lg">
+      <div class="p-10">
+        <section>
+          <h2 class="text-2xl font-bold">List Product</h2>
+          <form method="post" action="/cart/add">
+            {{range $val := .Product}}
+            <input
+              type="checkbox"
+              id="check-{{ .Id }}"
+              name="product"
+              onclick="displayQty('{{ .Id }},{{ .Name }},{{ .Price }}', 'check-{{ .Id }}', 'qty-{{ .Id }}')"
+            />
+            <label class="label"
+              >{{ .Id }}. {{ .Name }}: Rp. {{ .Price }},-</label
+            >
+            <input
+              type="number"
+              style="display: none"
+              id="qty-{{ .Id }}"
+              value="1"
+              min="1"
+              max="100"
+              onchange="displayQty('{{ .Id }},{{ .Name }},{{ .Price }}', 'check-{{ .Id }}', 'qty-{{ .Id }}')"
+            />
+            <br />
+            {{else}} Empty Product {{end}}
+            <button
+              type="submit"
+              class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-1 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+            >
+              Add to cart
+            </button>
+          </form>
+        </section>
+      </div>
+    </div>
+    <div class="bg-white m-10 rounded-t-3xl rounded-b-2xl drop-shadow-lg">
+      <section class="p-10">
+        <h2 class="text-2xl font-bold">My Cart</h2>
+
+        <ul class="space-y-1 max-w-md list-disc list-inside">
+          {{range $val := .Cart.Cart}}
+          <li>
+            {{ .Name }}
+            <ul class="p-2">
+              <li>Price: Rp. {{ .Price }},-</li>
+              <li>Quantity: {{ .Quantity }}</li>
+              <li>Total: {{ .Total }}</li>
+            </ul>
+          </li>
+          {{else}} Empty Cart {{end}}
+        </ul>
+        <p class="font-bold">Total Price Rp. {{.Cart.TotalPrice}},-</p>
+      </section>
+    </div>
+
+    <footer class="px-10 my-5">
+      <form method="get" action="/user/logout">
+        <button
+          type="submit"
+          class="bg-red-500 hover:bg-red-400 text-white text-xl font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+        >
+          Logout
+        </button>
+      </form>
+    </footer>
+  </body>
+</html>
